@@ -7,26 +7,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_above="@id/input_group"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/input_group">
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:text="Read NFC Data"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:text="Bring near the NFC tag to the device!"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textViewResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/input_group"

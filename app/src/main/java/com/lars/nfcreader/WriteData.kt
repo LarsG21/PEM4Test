@@ -1,6 +1,5 @@
-package com.salman.nfcreader
+package com.lars.nfcreader
 
-import android.R.id.message
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter

@@ -1,4 +1,4 @@
-package com.salman.nfcreader
+package com.lars.nfcreader
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -13,10 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-
-
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_write_data.*
@@ -24,6 +23,9 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private var intentFiltersArray: Array<IntentFilter>? = null
+
+    private lateinit var textViewResult: TextView
+
     private val techListsArray = arrayOf(arrayOf(NfcF::class.java.name))
     private val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide();
         setContentView(R.layout.activity_main)
+        textViewResult = findViewById(R.id.textViewResult)
 
         try {
 
@@ -60,15 +63,11 @@ class MainActivity : AppCompatActivity() {
                 val myDialog = builder.create()
                 myDialog.setCanceledOnTouchOutside(false)
                 myDialog.show()
-                txtviewshopid.setText("THIS DEVICE DOESN'T SUPPORT NFC. PLEASE TRY WITH ANOTHER DEVICE!")
-                txtviewmachineid.visibility = View.INVISIBLE
 
             } else if (!nfcAdapter!!.isEnabled) {
                 val builder = AlertDialog.Builder(this@MainActivity, R.style.MyAlertDialogStyle)
                 builder.setTitle("NFC Disabled")
                 builder.setMessage("Plesae Enable NFC")
-                txtviewshopid.setText("NFC IS NOT ENABLED. PLEASE ENABLE NFC IN SETTINGS->NFC")
-                txtviewmachineid.visibility = View.INVISIBLE
 
                 builder.setPositiveButton("Settings") { _, _ -> startActivity(Intent(Settings.ACTION_NFC_SETTINGS)) }
                 builder.setNegativeButton("Cancel", null)
@@ -89,10 +88,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-        var iswrite = "0"
-
-    var machineid="";
-    var shopid="";
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
@@ -106,67 +101,12 @@ class MainActivity : AppCompatActivity() {
                     val inNdefMessage = this[0] as NdefMessage
                     val inNdefRecords = inNdefMessage.records
                     //if there are many records, you can call inNdefRecords[1] as array
-                    var ndefRecord_0 = inNdefRecords[0]
-                    var inMessage = String(ndefRecord_0.payload)
-                    shopid = inMessage.drop(3);
-                    txtviewshopid.setText("SHOP ID: " + shopid)
-
-                    ndefRecord_0 = inNdefRecords[1]
-                    inMessage = String(ndefRecord_0.payload)
-                    machineid = inMessage.drop(3);
-                    txtviewmachineid.setText("MACHINE ID: " + machineid)
-
-                    if (!txtuserid.text.toString().equals("")) {
-                        if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
-                            || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
-                        ) {
-
-                            val tag =
-                                intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-                            val ndef = Ndef.get(tag) ?: return
-
-                            if (ndef.isWritable) {
-
-                                var message = NdefMessage(
-                                    arrayOf(
-                                        NdefRecord.createTextRecord("en", shopid),
-                                        NdefRecord.createTextRecord("en", machineid),
-                                        NdefRecord.createTextRecord(
-                                            "en",
-                                            txtuserid.text.toString()
-                                        )
-
-                                    )
-                                )
+                    val ndefRecord_0 = inNdefRecords[0]
+                    val inMessage = String(ndefRecord_0.payload)
+                    val Message = inMessage.drop(3);
+                    textViewResult.setText(Message.toString())
 
 
-                                ndef.connect()
-                                ndef.writeNdefMessage(message)
-                                ndef.close()
-
-                                txtviewuserid.setText("USER ID: "+txtuserid.text.toString());
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Successfully Wroted!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                        }
-//
-                    } else {
-                        try {
-
-
-                            ndefRecord_0 = inNdefRecords[2]
-                            inMessage = String(ndefRecord_0.payload)
-
-                            txtviewuserid.setText("USER ID: " + inMessage.drop(3))
-                        }
-                        catch (ex:Exception){
-                            Toast.makeText(applicationContext, "User ID not writted!", Toast.LENGTH_SHORT).show()
-                        }
-                    }
                 } catch (ex: Exception) {
                     Toast.makeText(
                         applicationContext,

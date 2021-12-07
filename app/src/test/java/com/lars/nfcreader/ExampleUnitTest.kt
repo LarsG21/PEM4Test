@@ -1,4 +1,4 @@
-package com.salman.nfcreader
+package com.lars.nfcreader
 
 import org.junit.Test
 
